@@ -67,6 +67,6 @@ python3 neural_network.py
 
 ## Пример работы кода
 
-[![asciicast](https://asciinema.org/a/HjZBrcvsFgZkDHN2gC7xCGyKF.svg)](https://asciinema.org/a/HjZBrcvsFgZkDHN2gC7xCGyKF)
+[![asciicast](https://asciinema.org/a/mgtNPvwGuVGGSudXtu5CVsQDl.svg)](https://asciinema.org/a/mgtNPvwGuVGGSudXtu5CVsQDl)
 
 
