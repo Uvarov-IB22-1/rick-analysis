@@ -76,5 +76,5 @@ f4.close()
 
 print("Accuracy:", calc_accuracy(dataset, W1, W2, b1, b2))
 
-plt.plot(loss_arr)
-plt.show()
+#plt.plot(loss_arr)
+#plt.show()
