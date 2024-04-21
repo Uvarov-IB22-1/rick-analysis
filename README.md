@@ -31,7 +31,7 @@ pip install random2
 pip install numpy
 ```
 
-## Инструкции по установке и исаользованию
+## Инструкции по установке и использованию
 1. Клонируйте репозиторий на свой компьютер.
 ```
 git clone git@github.com:Uvarov-IB22-1/rick-analysis.git
