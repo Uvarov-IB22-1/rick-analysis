@@ -74,7 +74,7 @@ dataset = [(np.array([selection[i]]), i//500) for i in range(len(selection))]
 
 
 W1 = []
-f1 = open('W1', 'r')
+f1 = open('neural_network/W1', 'r')
 for i in f1:
     W1.append(list(map(float, i.split())))
 f1.close()
