@@ -4,7 +4,8 @@ from config import relu, softmax, predict
 
 
 u = np.array([90, 80, 100, 70])
-probs = predict(u, W1, W2, b1, b2)
+prediction = predict(u, W1, W2, b1, b2)
+
 
 risk_classification = ['Низшая', 'Средняя', 'Высшая']
-print('Группа риска:', risk_classification[np.argmax(probs)])
+print('Группа риска:', risk_classification[np.argmax(prediction)])
