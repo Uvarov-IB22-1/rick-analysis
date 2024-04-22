@@ -77,7 +77,7 @@ for i in b2.tolist():
 f4.close()
 
 
-print("Accuracy:", calc_accuracy(dataset, W1, W2, b1, b2))
+print("Точность предсказаний:", calc_accuracy(dataset, W1, W2, b1, b2))
 
 
 # plt.plot(loss_arr)
