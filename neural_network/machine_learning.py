@@ -2,8 +2,8 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 from config import THREAT, RISK, NEURONS, ALPHA, EPOCHS, BATCH_SIZE
-from config import relu, softmax, predict, softmax_batch, sparse_cross_entropy, \
-    sparse_cross_entropy_batch, to_full, to_full_batch, relu_deriv, calc_accuracy, dataset
+from config import relu, softmax, predict, softmax_batch, cross_entropy, \
+    cross_entropy_batch, one_hot_encoding, one_hot_encoding_batch, relu_deriv, calc_accuracy, dataset
 
 
 W1 = np.random.rand(THREAT, NEURONS)  # вес
@@ -23,7 +23,7 @@ for ep in range(EPOCHS):
     random.shuffle(dataset)
     for i in range(len(dataset) // BATCH_SIZE):
 
-        batch_x, batch_y = zip(*dataset[i*BATCH_SIZE : i*BATCH_SIZE+BATCH_SIZE])
+        batch_x, batch_y = zip(*dataset[i * BATCH_SIZE: i * BATCH_SIZE + BATCH_SIZE])
         x = np.concatenate(batch_x, axis=0)
         y = np.array(batch_y)
 
@@ -32,10 +32,10 @@ for ep in range(EPOCHS):
         h1 = relu(t1)
         t2 = h1 @ W2 + b2
         z = softmax_batch(t2)
-        E = np.sum(sparse_cross_entropy_batch(z, y))
+        ERROR = np.sum(cross_entropy_batch(z, y))
 
         # Обратное распространение
-        y_full = to_full_batch(y, RISK)
+        y_full = one_hot_encoding_batch(y, RISK)
         dE_dt2 = z - y_full
         dE_dW2 = h1.T @ dE_dt2
         dE_db2 = np.sum(dE_dt2, axis=0, keepdims=True)
@@ -50,7 +50,7 @@ for ep in range(EPOCHS):
         W2 = W2 - ALPHA * dE_dW2
         b2 = b2 - ALPHA * dE_db2
 
-        loss_arr.append(E)
+        loss_arr.append(ERROR)
 
 
 f1 = open('W1', 'w')
@@ -80,5 +80,5 @@ f4.close()
 print("Точность предсказаний:", calc_accuracy(dataset, W1, W2, b1, b2))
 
 
-# plt.plot(loss_arr)
-# plt.show()
+plt.plot(loss_arr)
+plt.show()
