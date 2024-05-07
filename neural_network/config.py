@@ -14,11 +14,8 @@ def softmax(t):
 
 def predict(x, W1, W2, b1, b2):
     '''Возвращает вектор из 3 вероятностей'''
-    t1 = x @ W1 + b1
-    h1 = relu(t1)
-    t2 = h1 @ W2 + b2
-    z = softmax(t2)
-    return z
+    h1 = relu(x @ W1 + b1)
+    return softmax(h1 @ W2 + b2)
 
 
 def softmax_batch(t):
@@ -26,21 +23,21 @@ def softmax_batch(t):
     return out / np.sum(out, axis=1, keepdims=True)
 
 
-def sparse_cross_entropy(z, y):
+def cross_entropy(z, y):
     return -np.log(z[0, y])
 
 
-def sparse_cross_entropy_batch(z, y):
+def cross_entropy_batch(z, y):
     return -np.log(np.array([z[j, y[j]] for j in range(len(y))]))
 
 
-def to_full(y, num_classes):
+def one_hot_encoding(y, num_classes):
     y_full = np.zeros((1, num_classes))
     y_full[0, y] = 1
     return y_full
 
 
-def to_full_batch(y, num_classes):
+def one_hot_encoding_batch(y, num_classes):
     y_full = np.zeros((len(y), num_classes))
     for j, yj in enumerate(y):
         y_full[j, yj] = 1
@@ -64,7 +61,7 @@ def calc_accuracy(dataset, W1, W2, b1, b2):
 
 THREAT = 4 #количество входных угроз
 RISK = 3 #количество классов рисков
-NEURONS = 10 #количество нейронов
+NEURONS = 10 #количество нейронов в скрытом слое
 
 
 ALPHA = 0.0002
