@@ -1,84 +1,79 @@
 import random
 import numpy as np
-import matplotlib.pyplot as plt
-from config import THREAT, RISK, NEURONS, ALPHA, EPOCHS, BATCH_SIZE
-from config import relu, softmax, predict, softmax_batch, cross_entropy, \
-    cross_entropy_batch, one_hot_encoding, one_hot_encoding_batch, relu_deriv, calc_accuracy, dataset
+from config import THREAT, RISK, NEURONS, ALPHA, EPOCHS, BATCH
+from config import rectified_linear_activation, softmax, prediction, softmax_batched, cross_entropy, \
+    cross_entropy_batched, one_hot_encoding, one_hot_encoding_batched, rectified_linear_activation_derivative, calculate_accuracy, TEST_DATASET
 
 
-W1 = np.random.rand(THREAT, NEURONS)  # вес
-b1 = np.random.rand(1, NEURONS)  # смещение
-W2 = np.random.rand(NEURONS, RISK)
-b2 = np.random.rand(1, RISK)
+WEIGHTS_1 = np.random.rand(THREAT, NEURONS)
+BIAS_1 = np.random.rand(1, NEURONS)
+WEIGHTS_2 = np.random.rand(NEURONS, RISK)
+BIAS_2 = np.random.rand(1, RISK)
 
 
-W1 = (W1 - 0.5) * 2 * np.sqrt(1 / THREAT)
-b1 = (b1 - 0.5) * 2 * np.sqrt(1 / THREAT)
-W2 = (W2 - 0.5) * 2 * np.sqrt(1 / NEURONS)
-b2 = (b2 - 0.5) * 2 * np.sqrt(1 / NEURONS)
+WEIGHTS_1 = (WEIGHTS_1 - 0.5) * 2 * np.sqrt(1 / THREAT)
+BIAS_1 = (BIAS_1 - 0.5) * 2 * np.sqrt(1 / THREAT)
+WEIGHTS_2 = (WEIGHTS_2 - 0.5) * 2 * np.sqrt(1 / NEURONS)
+BIAS_2 = (BIAS_2 - 0.5) * 2 * np.sqrt(1 / NEURONS)
 
 
-loss_arr = []
-for ep in range(EPOCHS):
-    random.shuffle(dataset)
-    for i in range(len(dataset) // BATCH_SIZE):
+for _ in range(EPOCHS):
 
-        batch_x, batch_y = zip(*dataset[i * BATCH_SIZE: i * BATCH_SIZE + BATCH_SIZE])
-        x = np.concatenate(batch_x, axis=0)
-        y = np.array(batch_y)
+    random.shuffle(TEST_DATASET)
+    lenght = len(TEST_DATASET)
+
+    for iteration in range(lenght // BATCH):
+
+        x_batched, target_batched = zip(*TEST_DATASET[BATCH * iteration: BATCH * (iteration + 1)])
+        x = np.concatenate(x_batched, axis=0)
+        target = np.array(target_batched)
 
         # Прямое распространение
-        t1 = x @ W1 + b1
-        h1 = relu(t1)
-        t2 = h1 @ W2 + b2
-        z = softmax_batch(t2)
-        ERROR = np.sum(cross_entropy_batch(z, y))
+        t_1 = x @ WEIGHTS_1 + BIAS_1
+        HIDDEN_1 = rectified_linear_activation(t_1)
+        t_2 = HIDDEN_1 @ WEIGHTS_2 + BIAS_2
+        output = softmax_batched(t_2)
+        ERROR = np.sum(cross_entropy_batched(output, target))
 
         # Обратное распространение
-        y_full = one_hot_encoding_batch(y, RISK)
-        dE_dt2 = z - y_full
-        dE_dW2 = h1.T @ dE_dt2
-        dE_db2 = np.sum(dE_dt2, axis=0, keepdims=True)
-        dE_dh1 = dE_dt2 @ W2.T
-        dE_dt1 = dE_dh1 * relu_deriv(t1)
-        dE_dW1 = x.T @ dE_dt1
-        dE_db1 = np.sum(dE_dt1, axis=0, keepdims=True)
+        y_one_hot_encoding = one_hot_encoding_batched(target, RISK)
+        derivative_E_dt_2 = output - y_one_hot_encoding
+        derivative_E_dWEIGHTS_2 = HIDDEN_1.T @ derivative_E_dt_2
+        derivative_E_dBIAS_2 = np.sum(derivative_E_dt_2, axis=0, keepdims=True)
+        derivative_E_dHIDDEN_1 = derivative_E_dt_2 @ WEIGHTS_2.T
+        derivative_E_dt1 = derivative_E_dHIDDEN_1 * rectified_linear_activation_derivative(t_1)
+        derivative_E_dWEIGHTS_1 = x.T @ derivative_E_dt1
+        derivative_E_dBIAS1 = np.sum(derivative_E_dt1, axis=0, keepdims=True)
 
         # Обновление весов
-        W1 = W1 - ALPHA * dE_dW1
-        b1 = b1 - ALPHA * dE_db1
-        W2 = W2 - ALPHA * dE_dW2
-        b2 = b2 - ALPHA * dE_db2
-
-        loss_arr.append(ERROR)
+        WEIGHTS_1 = WEIGHTS_1 - ALPHA * derivative_E_dWEIGHTS_1
+        BIAS_1 = BIAS_1 - ALPHA * derivative_E_dBIAS1
+        WEIGHTS_2 = WEIGHTS_2 - ALPHA * derivative_E_dWEIGHTS_2
+        BIAS_2 = BIAS_2 - ALPHA * derivative_E_dBIAS_2
 
 
 f1 = open('W1', 'w')
-for i in W1.tolist():
-    f1.write(' '.join(map(str,i))+'\n')
+for iteration in WEIGHTS_1.tolist():
+    f1.write(' '.join(map(str, iteration)) + '\n')
 f1.close()
 
 
 f2 = open('W2', 'w')
-for i in W2.tolist():
-    f2.write(' '.join(map(str, i))+'\n')
+for iteration in WEIGHTS_2.tolist():
+    f2.write(' '.join(map(str, iteration)) + '\n')
 f2.close()
 
 
 f3 = open('b1', 'w')
-for i in b1.tolist():
-    f3.write(' '.join(map(str, i))+'\n')
+for iteration in BIAS_1.tolist():
+    f3.write(' '.join(map(str, iteration)) + '\n')
 f3.close()
 
 
 f4 = open('b2', 'w')
-for i in b2.tolist():
-    f4.write(' '.join(map(str, i))+'\n')
+for iteration in BIAS_2.tolist():
+    f4.write(' '.join(map(str, iteration)) + '\n')
 f4.close()
 
 
-print("Точность предсказаний:", calc_accuracy(dataset, W1, W2, b1, b2))
-
-
-plt.plot(loss_arr)
-plt.show()
+print("Точность предсказаний:", calculate_accuracy(TEST_DATASET, WEIGHTS_1, WEIGHTS_2, BIAS_1, BIAS_2))
