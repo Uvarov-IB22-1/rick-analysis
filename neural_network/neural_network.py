@@ -1,10 +1,10 @@
 import numpy as np
-from config import THREAT, RISK, NEURONS, W1, b1, W2, b2
-from config import relu, softmax, predict
+from config import THREAT, RISK, NEURONS, WEIGHTS_1, BIAS_1, WEIGHTS_2, BIAS_2
+from config import rectified_linear_activation, softmax, prediction
 
 
 u = np.array([90, 80, 100, 70])
-prediction = predict(u, W1, W2, b1, b2)
+prediction = prediction(u, WEIGHTS_1, WEIGHTS_2, BIAS_1, BIAS_2)
 
 
 risk_classification = ['Низшая', 'Средняя', 'Высшая']
